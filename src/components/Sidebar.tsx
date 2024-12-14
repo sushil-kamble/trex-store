@@ -1,11 +1,22 @@
+'use client';
 import React from 'react';
+import { useStore } from '../context/StoreContext';
 
 const Sidebar: React.FC = () => {
+    const { updateFilter } = useStore();
     const filters = {
         Color: ['Red', 'Blue', 'Green'],
         Gender: ['Men', 'Women'],
         Price: ['0-250', '251-450', '450+'],
         Type: ['Polo', 'Hoodie', 'Basic'],
+    };
+
+    const handleCheckboxChange = (
+        category: string,
+        option: string,
+        checked: boolean
+    ) => {
+        updateFilter(category, option, checked);
     };
 
     return (
@@ -24,6 +35,13 @@ const Sidebar: React.FC = () => {
                                 name={category}
                                 value={option}
                                 className="mr-2"
+                                onChange={(e) =>
+                                    handleCheckboxChange(
+                                        category,
+                                        option,
+                                        e.target.checked
+                                    )
+                                }
                             />
                             <label
                                 htmlFor={`${category}-${option}`}

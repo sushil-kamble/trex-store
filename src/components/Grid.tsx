@@ -1,62 +1,30 @@
 'use client';
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
-
-interface Product {
-    id: string;
-    imageURL: string;
-    name: string;
-    price: number;
-    currency: string;
-    quantity: number;
-}
+import React from 'react';
+import { useStore } from '../context/StoreContext';
 
 const Grid: React.FC = () => {
-    const [products, setProducts] = useState<Product[]>([]);
-    const [cart, setCart] = useState<{ [key: string]: number }>({});
+    const {
+        products,
+        cart,
+        addToCart,
+        incrementQuantity,
+        decrementQuantity,
+        searchQuery,
+        filters,
+        applyFilters,
+    } = useStore();
 
-    useEffect(() => {
-        fetch(
-            'https://geektrust.s3.ap-southeast-1.amazonaws.com/coding-problems/shopping-cart/catalogue.json'
-        )
-            .then((response) => response.json())
-            .then((data) => {
-                setProducts(data);
-            })
-            .catch((error) => {
-                console.error('Error fetching products:', error);
-            });
-    }, []);
-
-    const addToCart = (id: string) => {
-        setCart((prevCart) => ({
-            ...prevCart,
-            [id]: (prevCart[id] || 0) + 1,
-        }));
-    };
-
-    const incrementQuantity = (id: string) => {
-        setCart((prevCart) => ({
-            ...prevCart,
-            [id]: prevCart[id] + 1,
-        }));
-    };
-
-    const decrementQuantity = (id: string) => {
-        setCart((prevCart) => {
-            const newCart = { ...prevCart };
-            if (newCart[id] > 1) {
-                newCart[id] -= 1;
-            } else {
-                delete newCart[id];
-            }
-            return newCart;
-        });
-    };
+    const filteredProducts = applyFilters(
+        products.filter((product) =>
+            product.name.toLowerCase().includes(searchQuery.toLowerCase())
+        ),
+        filters
+    );
 
     return (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {products.map((product) => (
+            {filteredProducts.map((product) => (
                 <div
                     key={product.id}
                     className="rounded-lg border p-4 shadow-md"
@@ -65,17 +33,12 @@ const Grid: React.FC = () => {
                         <Image
                             src={product.imageURL}
                             alt={product.name}
-                            className="rounded-lg object-fill"
-                            width={300}
-                            height={500}
-                            // blurDataURL="data:..." automatically provided
-                            // placeholder="blur" // Optional blur-up while loading
+                            className="rounded-lg object-cover"
+                            width={200}
+                            height={200}
+                            blurDataURL="data:..."
+                            placeholder="blur"
                         />
-                        {/* <img
-                            src={product.imageURL}
-                            alt={product.name}
-                            className="rounded-lg"
-                        /> */}
                     </div>
                     <h3 className="text-lg font-semibold">{product.name}</h3>
                     <p className="text-gray-600">
