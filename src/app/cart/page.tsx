@@ -1,12 +1,10 @@
 'use client';
 import React from 'react';
 import { useStore } from '~/context/StoreContext';
+import { useRouter } from 'next/navigation';
 
-type Props = {
-    resetCartPopper: () => void;
-};
-
-const Cart = ({ resetCartPopper }: Props) => {
+const CartPage = () => {
+    const router = useRouter();
     const {
         cart,
         products,
@@ -29,12 +27,20 @@ const Cart = ({ resetCartPopper }: Props) => {
         alert('Thank you for your purchase!');
         clearCart();
         resetFilters();
-        resetCartPopper();
+        router.push('/');
     };
 
     return (
-        <div className="cart-container">
-            <h2 className="mb-4 text-xl font-bold">Shopping Cart</h2>
+        <div className="container mx-auto p-4">
+            <button
+                onClick={() => router.back()}
+                className="mb-4 text-blue-500 hover:text-blue-600"
+            >
+                ← Back
+            </button>
+
+            <h1 className="mb-6 text-2xl font-bold">Shopping Cart</h1>
+
             {cartItems.length === 0 ? (
                 <p>Your cart is empty</p>
             ) : (
@@ -90,4 +96,4 @@ const Cart = ({ resetCartPopper }: Props) => {
     );
 };
 
-export default Cart;
+export default CartPage;

@@ -3,7 +3,7 @@ import React from 'react';
 import { useStore } from '../context/StoreContext';
 
 const Sidebar: React.FC = () => {
-    const { updateFilter } = useStore();
+    const { updateFilter, filters: activeFilters } = useStore();
     const filters = {
         Color: ['Red', 'Blue', 'Green'],
         Gender: ['Men', 'Women'],
@@ -35,6 +35,10 @@ const Sidebar: React.FC = () => {
                                 name={category}
                                 value={option}
                                 className="mr-2"
+                                checked={
+                                    activeFilters[category]?.includes(option) ||
+                                    false
+                                }
                                 onChange={(e) =>
                                     handleCheckboxChange(
                                         category,

@@ -7,7 +7,7 @@ function page() {
     return (
         <div className="flex gap-4">
             <Sidebar />
-            <div className="flex flex-col gap-4">
+            <div className="flex grow flex-col gap-4">
                 <Search />
                 <Grid />
             </div>

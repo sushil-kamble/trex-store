@@ -13,6 +13,7 @@ const Grid: React.FC = () => {
         searchQuery,
         filters,
         applyFilters,
+        resetFilters, // Ensure this is available in your store context
     } = useStore();
 
     const filteredProducts = applyFilters(
@@ -21,6 +22,20 @@ const Grid: React.FC = () => {
         ),
         filters
     );
+
+    if (filteredProducts.length === 0) {
+        return (
+            <div className="flex flex-col items-center justify-center space-y-4 p-8">
+                <p className="text-lg text-gray-600">No products found</p>
+                <button
+                    onClick={resetFilters}
+                    className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+                >
+                    Reset Filters
+                </button>
+            </div>
+        );
+    }
 
     return (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">

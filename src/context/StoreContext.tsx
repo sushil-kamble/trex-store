@@ -28,6 +28,7 @@ interface StoreContextProps {
         filters: { [key: string]: string[] }
     ) => Product[];
     clearCart: () => void;
+    resetFilters: () => void;
 }
 
 const StoreContext = createContext<StoreContextProps | undefined>(undefined);
@@ -37,6 +38,18 @@ export const StoreProvider = ({ children }: { children: React.ReactNode }) => {
     const [cart, setCart] = useState<{ [key: string]: number }>({});
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [filters, setFilters] = useState<{ [key: string]: string[] }>({});
+
+    // Load cart from localStorage on mount
+    useEffect(() => {
+        const savedCart = localStorage.getItem('cart');
+        if (savedCart) {
+            try {
+                setCart(JSON.parse(savedCart));
+            } catch (e) {
+                console.error('Error parsing cart from localStorage:', e);
+            }
+        }
+    }, []);
 
     useEffect(() => {
         fetch(
@@ -135,6 +148,16 @@ export const StoreProvider = ({ children }: { children: React.ReactNode }) => {
         });
     };
 
+    const resetFilters = () => {
+        setSearchQuery('');
+        setFilters({});
+    };
+
+    // Save cart to localStorage when it changes
+    useEffect(() => {
+        localStorage.setItem('cart', JSON.stringify(cart));
+    }, [cart]);
+
     return (
         <StoreContext.Provider
             value={{
@@ -149,6 +172,7 @@ export const StoreProvider = ({ children }: { children: React.ReactNode }) => {
                 updateFilter,
                 applyFilters,
                 clearCart,
+                resetFilters,
             }}
         >
             {children}
