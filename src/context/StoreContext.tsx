@@ -31,10 +31,18 @@ interface StoreContextProps {
     resetFilters: () => void;
 }
 
+interface StoreProviderProps {
+    children: React.ReactNode;
+    initialProducts: Product[];
+}
+
 const StoreContext = createContext<StoreContextProps | undefined>(undefined);
 
-export const StoreProvider = ({ children }: { children: React.ReactNode }) => {
-    const [products, setProducts] = useState<Product[]>([]);
+export const StoreProvider = ({
+    children,
+    initialProducts,
+}: StoreProviderProps) => {
+    const [products] = useState<Product[]>(initialProducts);
     const [cart, setCart] = useState<{ [key: string]: number }>({});
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [filters, setFilters] = useState<{ [key: string]: string[] }>({});
@@ -49,19 +57,6 @@ export const StoreProvider = ({ children }: { children: React.ReactNode }) => {
                 console.error('Error parsing cart from localStorage:', e);
             }
         }
-    }, []);
-
-    useEffect(() => {
-        fetch(
-            'https://geektrust.s3.ap-southeast-1.amazonaws.com/coding-problems/shopping-cart/catalogue.json'
-        )
-            .then((response) => response.json())
-            .then((data) => {
-                setProducts(data);
-            })
-            .catch((error) => {
-                console.error('Error fetching products:', error);
-            });
     }, []);
 
     const addToCart = (id: string) => {
